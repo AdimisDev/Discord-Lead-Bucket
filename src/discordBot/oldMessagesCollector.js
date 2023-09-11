@@ -16,25 +16,20 @@ function collect_message_driver (message, bucketId) {
     if (desired_serverId !== null) {
         if (desired_channelId === null && desired_memberId === null) {
             if (message_serverId === desired_serverId) {
-                //console.log("Desired Server ID matched. Returning message.");
                 return message
             }
         } else if (desired_channelId !== null) {
             if (desired_memberId === null) {
                 if (message_serverId === desired_serverId && message_channelId === desired_channelId) {
-                    //console.log("Desired Server ID and Channel ID matched. Returning message.");
                     return message
                 }
             } else if (desired_memberId !== null) {
                 if (message_serverId === desired_serverId && message_channelId === desired_channelId && message_memberId === desired_memberId) {
-                    //console.log("Desired Server ID, Channel ID, and Member ID matched. Returning message.");
                     return message
                 }
             }
         }
     }
-
-    //console.log("No conditions matched. Returning null.");
     return null;
 };
 

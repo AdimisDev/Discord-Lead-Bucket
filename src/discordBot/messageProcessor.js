@@ -255,7 +255,6 @@ const messageProcessor = async (m, serverId, client) => {
 export const messageProcessorDriver = async (m, bucketId, client) => {
   const {serverId, channelId, memberId} = parseBucketId(bucketId);
   const processed_msg = await messageProcessor(m, serverId, client);
-  console.log(`New Message on AAA Incubator from ${processed_msg.authorName} on channel ${processed_msg.channelName}`);
   if (processed_msg != null){
     await bucketManager.addMessage(bucketId, JSON.stringify(processed_msg, null, 2));
   }

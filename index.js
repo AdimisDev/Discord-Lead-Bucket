@@ -4,6 +4,7 @@ import cors from 'cors';
 import bucketManager from './src/database/bucketDB.js';
 import { startDiscordService } from './src/discordBot/bot.js';
 import bucketRouter from './src/routes/bucket.js';
+import discordRouter from './src/routes/discord.js';
 
 const app = express();
 app.use(express.json());
@@ -12,7 +13,8 @@ app.use(cors());
 dotenv.config();
 
 // Use the defined routes
-app.use('/api', bucketRouter);
+app.use('/api/buckets', bucketRouter);
+app.use('/api/discord', discordRouter);
 
 async function run() {
   try {

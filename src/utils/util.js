@@ -17,6 +17,7 @@ export const parseBucketId = (bucketID) => {
 };
 
 export function parseMessagesArray(array) {
+    console.log("Array from parseMessagesArray: ", arr)
     const parsedArray = array.map(item => {
       try {
         return JSON.parse(item);

@@ -30,17 +30,14 @@ class BucketManager {
             const {serverId, channelId, memberId} = parseBucketId(bucketId);
             const msg = await getMessageApi(serverId, channelId, memberId, 0)
             parsedMsg = JSON.stringify(msg, null, 2); // Assign value to parsedMsg
-            console.log(`parsedMsg when oldMessage: ${oldMessage}: `, parsedMsg);
         } else {
             parsedMsg = []; // Assign value to parsedMsg
-            console.log(`parsedMsg when oldMessage: ${oldMessage}: `, parsedMsg);
         }
     
         const bucket = {id: bucketId, messages: parsedMsg};
         const db = this.client.db(this.dbName);
         const bucketCollection = db.collection(this.collectionName);
         await bucketCollection.insertOne(bucket);
-        console.log("Bucket added:", bucket);
     }    
 
     async updateBucket(bucketId, updatedData) {
@@ -93,8 +90,6 @@ class BucketManager {
             { id: bucketId },
             { $push: { messages: message } }
         );
-    
-        console.log("Message added to bucket...");
     }
 
     async getMessages(bucketId) {
@@ -118,7 +113,6 @@ class BucketManager {
             { $set: { "messages.$": newMessage } }
         );
         
-        console.log("Message updated in bucket:", bucketId);
     }
 
     async deleteMessage(bucketId, message) {
@@ -130,7 +124,6 @@ class BucketManager {
             { $pull: { messages: message } }
         );
         
-        console.log("Message deleted from bucket:", bucketId);
     }
     
     async deleteAllMessages(bucketId) {
@@ -141,8 +134,6 @@ class BucketManager {
             { id: bucketId },
             { $set: { messages: [] } }
         );
-        
-        console.log("All messages deleted from bucket:", bucketId);
     }
 
     async close() {
@@ -153,7 +144,7 @@ class BucketManager {
 
 // MongoDB URI and database/collection names
 const uri = process.env.MONGODB_DEV_URI;
-const bucket_dbName = process.emv.BUCKET_DEV_DB_NAME
+const bucket_dbName = process.env.BUCKET_DEV_DB_NAME
 const bucket_collectionName = process.env.BUCKET_DEV_COLLECTION_NAME
 
 // Create instances of the managers
