@@ -32,3 +32,5 @@ build/
 
 # Ignore tests folder
 tests/
+
+Readme.md

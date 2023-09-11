@@ -1,4 +1,3 @@
-
 # Discord Lead Bucket - Express.js and MongoDB Project
 
 ## Description
