@@ -44,21 +44,18 @@ class BucketManager {
         const db = this.client.db(this.dbName);
         const bucketCollection = db.collection(this.collectionName);
         await bucketCollection.updateOne({ id: bucketId }, { $set: updatedData });
-        console.log("Bucket updated:", bucketId);
     }
 
     async deleteBucket(bucketId) {
         const db = this.client.db(this.dbName);
         const bucketCollection = db.collection(this.collectionName);
         await bucketCollection.deleteOne({ id: bucketId });
-        console.log("Bucket deleted:", bucketId);
     }
 
     async deleteAllBuckets() {
         const db = this.client.db(this.dbName);
         const bucketCollection = db.collection(this.collectionName);
         await bucketCollection.deleteMany({});
-        console.log("All buckets deleted.");
     }
 
     async getBucket(bucketId) {

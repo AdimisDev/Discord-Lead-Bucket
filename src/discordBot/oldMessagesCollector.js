@@ -16,15 +16,18 @@ function collect_message_driver (message, bucketId) {
     if (desired_serverId !== null) {
         if (desired_channelId === null && desired_memberId === null) {
             if (message_serverId === desired_serverId) {
+                console.log("New Message Found...")
                 return message
             }
         } else if (desired_channelId !== null) {
             if (desired_memberId === null) {
                 if (message_serverId === desired_serverId && message_channelId === desired_channelId) {
+                    console.log("New Message Found...")
                     return message
                 }
             } else if (desired_memberId !== null) {
                 if (message_serverId === desired_serverId && message_channelId === desired_channelId && message_memberId === desired_memberId) {
+                    console.log("New Message Found...")
                     return message
                 }
             }
