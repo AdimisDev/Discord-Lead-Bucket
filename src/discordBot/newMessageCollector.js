@@ -2,6 +2,7 @@ import axios from 'axios';
 import { messageProcessorDriver } from './messageProcessor.js';
 import { createBucketId, parseBucketId } from '../utils/util.js';
 import { client } from './bot.js';
+import { discord_token } from './bot.js';
 
 let data = '';
 
@@ -20,7 +21,7 @@ const generateConfig = (url) => ({
   maxBodyLength: Infinity,
   url: url,
   headers: { 
-    'Authorization': 'OTkxNzE3MjY0NDEzOTU0MDc5.GItUYI.74XHkcphB86xrpWOnPQHondLqgUlcROKTdo-FU', 
+    'Authorization': discord_token, 
   },
   data: data
 });

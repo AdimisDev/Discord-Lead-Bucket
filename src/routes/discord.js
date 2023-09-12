@@ -1,10 +1,33 @@
 import express from 'express';
-import { sendMessageDiscord } from '../discordBot/bot.js';
+import { sendMessageDiscord, startDiscordService, stopDiscordService } from '../discordBot/bot.js';
 import { searchOldMessages } from '../discordBot/newMessageCollector.js';
 import { createBucketId } from '../utils/util.js';
 import bucketManager from '../database/bucketDB.js';
 
 const discordRouter = express.Router();
+
+// Route to send a discord message on a server.
+discordRouter.post('/start-discord-bot', async (req, res) => {
+    try {
+        const { discord_token } = req.body;
+        const username = await startDiscordService(discord_token);
+        res.status(200).json({ message: `Discord bot started successfully as ${username}`});
+    } catch (error) {
+        console.error('Error starting Discord bot:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Route to stop the Discord bot securely.
+discordRouter.get('/stop-discord-bot', async (req, res) => {
+    try {
+        stopDiscordService();
+        res.status(200).json({ message: 'Discord bot stopped successfully.' });
+    } catch (error) {
+        console.error('Error stopping Discord bot:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 // Route to send a discord message on a server.
 discordRouter.post('/send-message', async (req, res) => {

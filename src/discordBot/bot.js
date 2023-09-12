@@ -1,18 +1,37 @@
 import { Client } from 'discord.js-selfbot-v13';
 import { handleMessageCreate } from './oldMessagesCollector.js';
 import bucketManager from '../database/bucketDB.js';
+import { shutdown } from '../utils/util.js';
 
 export const client = new Client({ checkUpdate: false });
 client.setMaxListeners(30);
 
+let clientLoggedIn = false; // Track client login status
+export let discord_token = null;
+
 // SECTION: Start Discord Service
 export async function startDiscordService(token) {
+    discord_token = token
     console.log("Token from startDiscordService: ", token)
     try {
-      await client.login(token);
-      console.log(`Logged in as ${client.user?.username}`)
+        await client.login(token);
+        clientLoggedIn = true; // Set client login status to true
+        console.log(`Logged in to discord as as ${client.user?.username}`)
+
+        return client?.user.username
     } catch (e) {
-      console.log(e);
+        console.log(e);
+    }
+};
+
+// SECTION: Start Discord Service
+export function stopDiscordService() {
+    try {
+        client.destroy()
+        clientLoggedIn = false; // Set client login status to true
+        console.log(`Discord Bot Stopped...`)
+    } catch (e) {
+        console.log(e);
     }
 };
 
@@ -58,22 +77,16 @@ export async function sendMessageDiscord(serverId, channelId, messageContent) {
   });
 }
 
-// SECTION: Send Discord Message
-export const sendMessage = async (channel, content) => {
-  const res = await channel.send(content);
-  return res
-}
-
-export const shutdown = async () => {
-  console.log('Shutting down...');
-  try {
-    client.destroy();
-    console.log('Discord bot has been shut down.');
-  } catch (error) {
-    console.error('Error shutting down Discord bot:', error);
-  }
-  process.exit(0);
-};
+// SECTION: Message Collector
+client.on('messageCreate', async (message) => {
+    if (clientLoggedIn) {
+        if (message.channel.type === 'DM') {
+            console.log('New Message on your DM from: ', message.author.username)
+        } else {
+            await handleMessageCreate(message, bucketManager, client);
+        }
+    }
+});
 
 // Handle shutdown signals (e.g., SIGINT, SIGTERM)
 process.on('SIGINT', () => {
@@ -82,13 +95,4 @@ process.on('SIGINT', () => {
 
 process.on('SIGTERM', () => {
   shutdown();
-});
-
-// SECTION: Message Collector
-client.on('messageCreate', async (message) => {
-  if (message.channel.type === 'DM') {
-    console.log('New Message on your DM from: ', message.author.username)
-  } else {
-    await handleMessageCreate(message, bucketManager, client);
-  }
 });

@@ -28,3 +28,8 @@ export function parseMessagesArray(array) {
     });
     return parsedArray;
 };
+
+export const shutdown = async () => {
+  console.log('Shutting down...');
+  process.exit(0);
+};
