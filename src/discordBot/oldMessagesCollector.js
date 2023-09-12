@@ -39,8 +39,8 @@ function collect_message_driver (message, bucketId) {
 export async function handleMessageCreate(message, bucketManager, client) {
     try {
         const allBuckets = await bucketManager.getAllBuckets();
-        const bucketIds = allBuckets.map(bucket => bucket.id);
-        
+        const bucketIds = allBuckets.map(bucket => bucket.bucketId);
+
         const processingPromises = bucketIds.map(async (bucketId) => {
             const filteredMessage = collect_message_driver(message, bucketId);
             await messageProcessorDriver(filteredMessage, bucketId, client);

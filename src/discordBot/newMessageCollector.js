@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { messageProcessorDriver } from './messageProcessor.js';
-import { createBucketId } from '../utils/util.js';
+import { createBucketId, parseBucketId } from '../utils/util.js';
 import { client } from './bot.js';
 
 let data = '';
@@ -20,8 +20,7 @@ const generateConfig = (url) => ({
   maxBodyLength: Infinity,
   url: url,
   headers: { 
-    'Authorization': 'OTkxNzE3MjY0NDEzOTU0MDc5.GeoaHG.Z2Ro7Dn1hF0fzJpcuOGN0lVCtt_7vTMTg5Danw', 
-    'Cookie': '__cfruid=71e92d924404093f324c5d5e14ab6311def64642-1692389833; __dcfduid=e8bb4056ee7311ed9bfabaf4e1a8a31d; __sdcfduid=e8bb4056ee7311ed9bfabaf4e1a8a31d8738305cf4c59d94ab133d2b2325d8bdc45f421fca86b9db5b4880acdac58f74'
+    'Authorization': 'OTkxNzE3MjY0NDEzOTU0MDc5.GItUYI.74XHkcphB86xrpWOnPQHondLqgUlcROKTdo-FU', 
   },
   data: data
 });
@@ -35,22 +34,35 @@ const fetchDataFromURL = async (config) => {
   }
 };
 
-export const getMessageApi = async (serverID, channelID, memberID, offset) => {
-    try {
-      const url = fetchURLGenerator(serverID, offset, channelID, memberID);
+export const searchOldMessages = async (bucketId, offset) => {
+  const { serverId, channelId, memberId } = parseBucketId(bucketId)
+  try {
+      console.log('searchOldMessages - Parsing bucketId:', { serverId, channelId, memberId });
+
+      const url = fetchURLGenerator(serverId, offset, channelId, memberId);
+      console.log('searchOldMessages - Generated URL:', url);
+
       const config = generateConfig(url);
+      console.log('searchOldMessages - Generated Config:', config);
+
       const responseData = await fetchDataFromURL(config);
+
       const messages = responseData.messages;
-      const bucketId = createBucketId(serverID, channelID, memberID);
-  
+      console.log('searchOldMessages - Fetched Messages from URL:', messages);
+      const bucketId = createBucketId(serverId, channelId, memberId);
+
+      console.log('searchOldMessages - Processing Messages...');
       const processedMessages = await Promise.all(messages.map(async (message) => {
-        return await messageProcessorDriver(message, bucketId, client);
+          const processedMessage = await messageProcessorDriver(message[0], bucketId, client);
+          return processedMessage;
       }));
-  
+
+      console.log('searchOldMessages - Processed Messages...');
+
+      console.log('searchOldMessages - Processed Messages:', processedMessages);
       return processedMessages;
-  
-    } catch (e) {
-      console.log(e);
-    }
+
+  } catch (e) {
+      console.error('searchOldMessages Error:', e);
+  }
 };
-  

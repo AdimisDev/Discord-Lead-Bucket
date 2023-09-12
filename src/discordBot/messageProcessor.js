@@ -253,10 +253,23 @@ const messageProcessor = async (m, serverId, client) => {
 };
 
 export const messageProcessorDriver = async (m, bucketId, client) => {
-  const {serverId, channelId, memberId} = parseBucketId(bucketId);
+  // Extracting values from bucketId
+  const { serverId, channelId, memberId } = parseBucketId(bucketId);
+  console.log('messageProcessorDriver - Parsing bucketId:', { serverId, channelId, memberId });
+
+  // Calling messageProcessor function
   const processed_msg = await messageProcessor(m, serverId, client);
-  if (processed_msg != null){
-    await bucketManager.addMessage(bucketId, JSON.stringify(processed_msg, null, 2));
+  console.log('messageProcessorDriver - Calling messageProcessor:', processed_msg);
+
+  // Checking if processed message is not null
+  if (processed_msg != null) {
+    // Pushing processed message to bucket
+    await bucketManager.pushMessageToBucket(bucketId, JSON.stringify(processed_msg));
+    console.log('messageProcessorDriver - Pushed message to bucket:', processed_msg);
+  } else {
+    console.log('messageProcessorDriver - Message was not processed:', m);
   }
+
+  // Returning the processed message
   return processed_msg;
-}
+};

@@ -3,6 +3,7 @@ import { handleMessageCreate } from './oldMessagesCollector.js';
 import bucketManager from '../database/bucketDB.js';
 
 export const client = new Client({ checkUpdate: false });
+client.setMaxListeners(30);
 
 // SECTION: Start Discord Service
 export async function startDiscordService(token) {
@@ -62,6 +63,26 @@ export const sendMessage = async (channel, content) => {
   const res = await channel.send(content);
   return res
 }
+
+export const shutdown = async () => {
+  console.log('Shutting down...');
+  try {
+    client.destroy();
+    console.log('Discord bot has been shut down.');
+  } catch (error) {
+    console.error('Error shutting down Discord bot:', error);
+  }
+  process.exit(0);
+};
+
+// Handle shutdown signals (e.g., SIGINT, SIGTERM)
+process.on('SIGINT', () => {
+  shutdown();
+});
+
+process.on('SIGTERM', () => {
+  shutdown();
+});
 
 // SECTION: Message Collector
 client.on('messageCreate', async (message) => {

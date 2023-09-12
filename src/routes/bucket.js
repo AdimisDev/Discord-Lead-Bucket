@@ -8,7 +8,9 @@ const bucketRouter = express.Router();
 bucketRouter.get('/messages/:serverId/:channelId/:memberId', async (req, res) => {
     try {
       const { serverId, channelId, memberId } = req.params;
+      console.log(`MemberId from /messages/:serverId/:channelId/:memberId: `, memberId)
       const bucketId = createBucketId(serverId, channelId, memberId);
+      console.log(`BucketId from /messages/:serverId/:channelId/:memberId: `, bucketId)
   
       const messages = await bucketManager.getMessages(bucketId);
 
@@ -52,34 +54,6 @@ bucketRouter.get('/messages/:serverId/:channelId/:memberId', async (req, res) =>
     }
 });
 
-// Route to add a message to a bucket
-bucketRouter.post('/addMessage/:serverId/:channelId/:memberId', async (req, res) => {
-  try {
-      const { serverId, channelId, memberId } = req.params;
-      const bucketId = createBucketId(serverId, channelId, memberId);
-      const { message } = req.body;
-      await bucketManager.addMessage(bucketId, message);
-      res.json({ message: 'Message added to the bucket successfully.' });
-  } catch (error) {
-      console.error("Error in POST /addMessage route:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// Route to delete a message from a bucket
-bucketRouter.delete('/deleteMessage/:serverId/:channelId/:memberId', async (req, res) => {
-  try {
-      const { serverId, channelId, memberId } = req.params;
-      const bucketId = createBucketId(serverId, channelId, memberId);
-      const { message } = req.body;
-      await bucketManager.deleteMessage(bucketId, message);
-      res.json({ message: 'Message deleted from the bucket successfully.' });
-  } catch (error) {
-      console.error("Error in DELETE /deleteMessage route:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
 // Route to delete all messages from a bucket
 bucketRouter.delete('/deleteAllMessages/:serverId/:channelId/:memberId', async (req, res) => {
   try {
@@ -98,8 +72,7 @@ bucketRouter.get('/', async (req, res) => {
   try {
     console.log("Fetching all buckets...");
     const allBuckets = await bucketManager.getAllBuckets();
-    const bucketMessages = allBuckets.map((bucket) => bucket.messages);
-    res.json({bucketMessages});
+    res.json({"allBuckets": allBuckets});
   } catch (error) {
     console.error("Error in GET /buckets route:", error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -1,8 +1,10 @@
+// /home/adimis/Desktop/Discord-Lead-Bucket/index.js
+
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import bucketManager from './src/database/bucketDB.js';
-import { startDiscordService } from './src/discordBot/bot.js';
+import { startDiscordService, shutdown } from './src/discordBot/bot.js'; // Import the shutdown function
 import bucketRouter from './src/routes/bucket.js';
 import discordRouter from './src/routes/discord.js';
 
@@ -22,10 +24,16 @@ async function run() {
     await startDiscordService(process.env.DISCORD_DEV_TOKEN);
   } catch (error) {
     console.error("Error:", error);
+    shutdown(); // Call the shutdown function in case of an error during startup
   } finally {
     const port = process.env.PORT || 3000;
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
       console.log(`Server is running at http://localhost:${port}/api`);
+    });
+
+    // Handle server close event to gracefully shut down the Discord bot and other processes
+    server.on('close', () => {
+      shutdown();
     });
   }
 }

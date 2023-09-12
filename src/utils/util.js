@@ -1,8 +1,8 @@
 export const createBucketId = (serverID, channelID, memberID) => {
-    const channelIDStr = channelID === null || channelID === "null" ? 'null' : channelID;
-    const memberIDStr = memberID === null || memberID === "null" ? 'null' : memberID;
-    const bucketID = `${serverID}/${channelIDStr}/${memberIDStr}`;    
-    return bucketID;
+  const channelIDStr = [null, 'null', 'undefined', 'None'].includes(channelID) ? 'null' : channelID;
+  const memberIDStr = [null, 'null', 'undefined', 'None'].includes(memberID) ? 'null' : memberID;
+  const bucketID = `${serverID}/${channelIDStr}/${memberIDStr}`;
+  return bucketID;
 };
 
 export const parseBucketId = (bucketID) => {
